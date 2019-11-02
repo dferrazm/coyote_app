@@ -8,7 +8,7 @@ class Coyote
 
   def set_trap!
     request_product_from_acme
-    learn_how_to_use_it
+    learn_how_to_use_it!
 
     Trap.new(acme_product)
   end
@@ -21,13 +21,11 @@ class Coyote
     @acme_product = acme_api.products.sample
   end
 
-  def learn_how_to_use_it
+  def learn_how_to_use_it!
     details = acme_api.product_details(acme_product)
 
-    if details.user_manual?
-      puts "According with the manual: #{details.user_manual}"
-    else
-      puts "There's nothing to learn about #{acme_product}"
-    end
+    raise 'missing user manual' unless details.user_manual?
+
+    puts "According with the manual: #{details.user_manual}"
   end
 end
