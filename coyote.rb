@@ -1,31 +1,24 @@
-require_relative 'acme_api'
 require_relative 'trap'
+require_relative 'product_learner'
 
 class Coyote
-  def initialize(acme_api: AcmeAPI::Client.new)
-    @acme_api = acme_api
+  def use(acme_product)
+    @acme_product = acme_product
+  end
+
+  def prepare_plan!
+    learn_how_to_use_acme_product
   end
 
   def set_trap!
-    request_product_from_acme
-    learn_how_to_use_it!
-
     Trap.new(acme_product)
   end
 
   private
 
-  attr_reader :acme_api, :acme_product
+  attr_reader :acme_product
 
-  def request_product_from_acme
-    @acme_product = acme_api.products.sample
-  end
-
-  def learn_how_to_use_it!
-    details = acme_api.product_details(acme_product)
-
-    raise 'missing user manual' unless details.user_manual?
-
-    puts "According with the manual: #{details.user_manual}"
+  def learn_how_to_use_acme_product
+    ProductLearner.call(acme_product)
   end
 end
